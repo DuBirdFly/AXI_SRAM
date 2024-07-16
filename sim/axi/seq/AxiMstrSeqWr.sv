@@ -21,11 +21,14 @@ class AxiMstrSeqWr extends uvm_sequence #(TrAxi);
     // 发送随机的 INCR 写
     virtual task case_0_run(int tr_num);
         TrAxi tr_q_aw[$], tr_q_w[$], tr_aw, tr_w;
-        TrAxi tr = TrAxi::type_id::create("tr");
         tr.wr_flag = 1;
 
         // 发送主体部分
         repeat (tr_num) begin
+            //! tr 的开辟空间必须放在循环内，否则每次对象空间都会被销毁
+            //  从而导致后续的 tr_q_aw 和 tr_q_w 句柄重复指向最后一个对象空间
+            TrAxi tr = TrAxi::type_id::create("tr");
+
             `zpf_randomize_with(tr, {addr < 2048; len < 4; burst == 1;})
             tr.align_calcu();
 

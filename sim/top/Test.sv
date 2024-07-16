@@ -15,7 +15,7 @@ class Test extends uvm_test;
 
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-    
+
         uvm_top.set_timeout(50us, 0);
 
         /* Override */

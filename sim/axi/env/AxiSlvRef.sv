@@ -88,7 +88,7 @@ class AxiSlvRef extends uvm_component;
             if (tr_q_wr[i].id == tr_b.id) begin
                 `uvm_info(get_type_name(), "\n**** Reference Model TrAxi from Chn AW+W+B: ****", UVM_MEDIUM)
                 $display(tr_q_wr[i].get_info());
-                
+
                 write_mem(tr_q_wr[i]);
                 tr_q_wr.delete(i);
                 check_chn_order = 1;

@@ -17,7 +17,7 @@ class AxiMstrChnB extends uvm_driver #(TrAxi);
         super.build_phase(phase);
         /* uvm_config_db#(<type>)::get(<uvm_component>, <"inst_name">, <"field_name">, <value>); */
         if (!uvm_config_db#(virtual IfAxi)::get(this, "", "vifAxi", vifAxi))
-            `uvm_fatal("NOVIF", "No IfAxi Interface Specified")        
+            `uvm_fatal("NOVIF", "No IfAxi Interface Specified")
         /* uvm_config_db#(<type>)::set(<uvm_component>, <"inst_name">, <"field_name">, <value>); */
     endfunction
 

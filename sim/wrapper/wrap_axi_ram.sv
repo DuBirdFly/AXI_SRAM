@@ -38,7 +38,7 @@ axi_ram #(
     .s_axi_arburst   ( axi.arburst      ),
     .s_axi_arvalid   ( axi.arvalid      ),
     .s_axi_arready   ( axi.arready      ),
-    
+
     .s_axi_rid       ( axi.rid          ),
     .s_axi_rdata     ( axi.rdata        ),
     .s_axi_rresp     ( axi.rresp        ),

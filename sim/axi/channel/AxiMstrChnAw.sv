@@ -23,7 +23,7 @@ class AxiMstrChnAw extends uvm_driver #(TrAxi);
 
     virtual task reset_phase(uvm_phase phase);
         phase.raise_objection(this);
-        
+
         {vifAxi.awid, vifAxi.awaddr, vifAxi.awlen, vifAxi.awsize, vifAxi.awburst, vifAxi.awvalid} = '{default:0};
 
         vifAxi.aresetn = 0;

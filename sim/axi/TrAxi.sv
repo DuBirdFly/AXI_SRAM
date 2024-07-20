@@ -39,11 +39,28 @@ class TrAxi extends uvm_sequence_item;
     /* Constrains */
 
     constraint c_addr {
+        // 不能越 axi 最大地址
         addr <= 2 ** `AXI_ADDR_WIDTH - `AXI_WSTRB_WIDTH * (len + 1);
-        (burst == 2) -> addr % (2 ** size) == 0;
-        (burst == 1) -> (addr / `AXI_BURST_BOUNDAEY + 1) * `AXI_BURST_BOUNDAEY >= addr + (len + 1) * (2 ** size);
+        solve burst, len, size before addr;
+    }
+
+    constraint c_fixed_addr {
+        // 不能越上界
         (burst == 0) -> (addr / `AXI_BURST_BOUNDAEY + 1) * `AXI_BURST_BOUNDAEY >= addr + (2 ** size);
         solve burst, len, size before addr;
+    }
+
+    constraint c_incr_addr {
+        // 不能越上界
+        (burst == 1) -> (addr / `AXI_BURST_BOUNDAEY + 1) * `AXI_BURST_BOUNDAEY >= addr + (len + 1) * (2 ** size);
+        solve burst, len, size before addr;
+    }
+
+    constraint c_wrap_addr {
+        // wrap 突发必须对齐
+        (burst == 2) -> addr % (2 ** size) == 0;
+        // 不能越上界+下界, align_calcu() 会处理非对齐情况 (用的偏心环回)
+        solve size before addr;
     }
 
     constraint c_len {

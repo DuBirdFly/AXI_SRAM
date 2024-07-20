@@ -174,16 +174,20 @@ class TrAxi extends uvm_sequence_item;
 
         end
 
-        // WRAP突发有两个起始地址，一个是突发起始地址 align_start_addr（假设是对齐的），一个是突发回环地址 warp_addr
-        // len={1,3,7,15} -> wrap_index ={1,2,4,8}
+        // 起始地址不是 wrap 中心的回环突发形式
         if (burst == 2) begin
-            int wrap_index = (len + 1) / 2;
-            bit [`AXI_ADDR_WIDTH-1:0] align_start_addr = addr / (2 ** size) * (2 ** size);
-            bit [`AXI_ADDR_WIDTH-1:0] wrap_addr = addr - wrap_index * (2 ** size);
+            bit [`AXI_ADDR_WIDTH-1:0] addr_tmp = addr;
+            bit [`AXI_ADDR_WIDTH-1:0] wrap_addr_space = (2 ** size) * (len + 1);
+            bit [`AXI_ADDR_WIDTH-1:0] wrap_addr_start = addr / wrap_addr_space * wrap_addr_space;
+            bit [`AXI_ADDR_WIDTH-1:0] wrap_addr_end   = wrap_addr_start + (2 ** size) * len;
 
-            for (int i = 0; i < wrap_index; i++) begin
-                axi_addr[i] = align_start_addr + i * (2 ** size);
-                axi_addr[wrap_index + i] = wrap_addr + i * (2 ** size);
+            if (addr % (2 ** size) != 0) `zpf_fatal("WRAP Burst must be aligned");
+            if (len != 1 && len != 3 && len != 7 && len != 15) `zpf_fatal("WRAP Burst len must be 1, 3, 7, 15");
+
+            for (int i = 0; i <= len; i++) begin
+                axi_addr[i] = addr_tmp;
+                if (addr_tmp == wrap_addr_end) addr_tmp = wrap_addr_start;
+                else addr_tmp += (2 ** size);
             end
 
             for (int i = 0;i <= len; i++) begin
@@ -196,6 +200,30 @@ class TrAxi extends uvm_sequence_item;
             for (int i = 0; i <= len; i++) align_wstrb[i] = wstrb[i] & align_mask[i];
             for (int i = 0; i <= len; i++) mem_addr[i] = axi_addr[i] / `AXI_WSTRB_WIDTH;
         end
+
+        // 起始地址为 wrap 中心的回环突发形式
+        // WRAP突发有两个起始地址，一个是突发起始地址 align_start_addr（假设是对齐的），一个是突发回环地址 warp_addr
+        // len={1,3,7,15} -> wrap_index ={1,2,4,8}
+        // if (burst == 2) begin
+        //     int wrap_index = (len + 1) / 2;
+        //     bit [`AXI_ADDR_WIDTH-1:0] align_start_addr = addr / (2 ** size) * (2 ** size);
+        //     bit [`AXI_ADDR_WIDTH-1:0] wrap_addr = addr - wrap_index * (2 ** size);
+
+        //     for (int i = 0; i < wrap_index; i++) begin
+        //         axi_addr[i] = align_start_addr + i * (2 ** size);
+        //         axi_addr[wrap_index + i] = wrap_addr + i * (2 ** size);
+        //     end
+
+        //     for (int i = 0;i <= len; i++) begin
+        //         for (int j = 0; j < 2 ** size; j++) begin
+        //             bit [`AXI_WSTRB_WIDTH-1:0] tmp = axi_addr[i] % `AXI_WSTRB_WIDTH + j;
+        //             align_mask[i][tmp] =1'b1;
+        //         end
+        //     end
+
+        //     for (int i = 0; i <= len; i++) align_wstrb[i] = wstrb[i] & align_mask[i];
+        //     for (int i = 0; i <= len; i++) mem_addr[i] = axi_addr[i] / `AXI_WSTRB_WIDTH;
+        // end
     endfunction
 
     //! 不自带尾行回车

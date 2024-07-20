@@ -44,3 +44,15 @@
 `define zpf_do_on_clone(SRC_SEQ_OR_ITEM, DST_SEQ_OR_ITEM, SEQR) \
     `zpf_do_on_pri_clone(SRC_SEQ_OR_ITEM, DST_SEQ_OR_ITEM, SEQR, -1)
 
+// 添加了 zpf_info/warning/error/fatal 的私有宏
+`define zpf_info_pri(MSG, PRI) `uvm_info(get_type_name(), MSG, PRI)
+`define zpf_info(MSG)          `zpf_info_pri(MSG, UVM_MEDIUM)
+
+`define zpf_warning_pri(MSG, PRI) `uvm_warning(get_type_name(), MSG, PRI)
+`define zpf_warning(MSG)          `zpf_warning_pri(MSG, UVM_MEDIUM)
+
+`define zpf_error_pri(MSG, PRI) `uvm_error(get_type_name(), MSG, PRI)
+`define zpf_error(MSG)          `zpf_error_pri(MSG, UVM_MEDIUM)
+
+`define zpf_fatal_pri(MSG, PRI) `uvm_fatal(get_type_name(), MSG, PRI)
+`define zpf_fatal(MSG)          `zpf_fatal_pri(MSG, UVM_MEDIUM)

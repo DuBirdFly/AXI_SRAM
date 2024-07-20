@@ -19,12 +19,12 @@ class AxiMstrSeqRd extends uvm_sequence #(TrAxi);
 
     // 发送随机的 INCR 读
     virtual task case_0_run(int tr_num);
-        TrAxi tr = TrAxi::type_id::create("tr");
         TrAxi tr_ar;
-        tr.wr_flag = 0;
 
         // 发送主体部分
         repeat (tr_num) begin
+            TrAxi tr = TrAxi::type_id::create("tr");
+            tr.wr_flag = 0;
             `zpf_randomize_with(tr, {addr < 2048; len < 4; burst == 1;})
             // `uvm_info(get_type_name(), {"Sending INCR Read:\n", tr_ar.get_info()}, UVM_MEDIUM)
             `zpf_do_on_clone(tr, tr_ar, m_sequencer)

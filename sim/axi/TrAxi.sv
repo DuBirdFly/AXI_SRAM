@@ -43,14 +43,14 @@ class TrAxi extends uvm_sequence_item;
         (burst == 2) -> addr % (2 ** size) == 0;
         (burst == 1) -> (addr / `AXI_BURST_BOUNDAEY + 1) * `AXI_BURST_BOUNDAEY >= addr + (len + 1) * (2 ** size);
         (burst == 0) -> (addr / `AXI_BURST_BOUNDAEY + 1) * `AXI_BURST_BOUNDAEY >= addr + (2 ** size);
-        solve addr before burst, len, size;
+        solve burst, len, size before addr;
     }
 
     constraint c_len {
         burst == 0 -> len < 16;
         burst == 1 -> len < 256;
         burst == 2 -> len inside {1, 3, 7, 15};
-        solve len before burst;
+        solve burst before len;
     }
 
     constraint c_size {
@@ -64,13 +64,13 @@ class TrAxi extends uvm_sequence_item;
     constraint c_data {
         wr_flag == 0 -> data.size() == 0;
         wr_flag == 1 -> data.size() == len + 1;
-        solve data before len;
+        solve len before data;
     }
 
     constraint c_strb {
         wr_flag == 0 -> wstrb.size() == 0;
         wr_flag == 1 -> wstrb.size() == len + 1;
-        solve wstrb before len;
+        solve len before wstrb;
     }
 
     function new(string name = "TrAxi");

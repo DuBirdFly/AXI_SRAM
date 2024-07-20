@@ -11,6 +11,7 @@
 `include "AxiMstrChnB.sv"
 `include "AxiMstrChnAr.sv"
 `include "AxiMstrChnR.sv"
+`include "AxiMstrMonR.sv"
 
 // axi-agent
 `include "AxiMstrSqr.sv"

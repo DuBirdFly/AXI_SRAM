@@ -14,7 +14,7 @@ module Top;
         uvm_config_db#(virtual IfAxi)::set(null, "uvm_test_top.env.axiMstrEnv.axiMstrAgtWr.axiMstrChnB",  "vifAxi", ifAxi);
         uvm_config_db#(virtual IfAxi)::set(null, "uvm_test_top.env.axiMstrEnv.axiMstrAgtRd.axiMstrChnAr", "vifAxi", ifAxi);
         uvm_config_db#(virtual IfAxi)::set(null, "uvm_test_top.env.axiMstrEnv.axiMstrAgtRd.axiMstrChnR",  "vifAxi", ifAxi);
-
+        uvm_config_db#(virtual IfAxi)::set(null, "uvm_test_top.env.axiMstrEnv.axiMstrAgtRd.axiMstrMonR",  "vifAxi", ifAxi);
     end
 
     initial begin

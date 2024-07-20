@@ -30,7 +30,8 @@ class AxiMstrEnv extends uvm_env;
 
         // [Chn]    ---> [Scb]
         axiMstrAgtRd.axiMstrChnAr.put_port.connect(axiSlvScb.imp_ar);
-        axiMstrAgtRd.axiMstrChnR.put_port.connect(axiSlvScb.imp_r);
+        // axiMstrAgtRd.axiMstrChnR.put_port.connect(axiSlvScb.imp_r);
+        axiMstrAgtRd.axiMstrMonR.put_port.connect(axiSlvScb.imp_r);
 
         // [Scb]    <--> [Ref]
         axiSlvScb.transport_port.connect(axiSlvRef.transport_imp);

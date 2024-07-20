@@ -63,6 +63,31 @@ interface IfAxi (
         output rready;
     endclocking
 
+    clocking mon_cb @(posedge aclk);
+        default input #1 output #1;
+        input  aresetn;
+
+        input  awid, awaddr, awlen, awsize, awburst;
+        input  awvalid;
+        input  awready;
+
+        input  wdata, wstrb, wlast;
+        input  wvalid;
+        input  wready;
+
+        input  bid, bresp;
+        input  bvalid;
+        input  bready;
+
+        input  arid, araddr, arlen, arsize, arburst;
+        input  arvalid;
+        input  arready;
+
+        input  rid, rdata, rresp, rlast;
+        input  rvalid;
+        input  rready;
+    endclocking
+
     modport SLAVE (
         input  aclk,
         input  aresetn,

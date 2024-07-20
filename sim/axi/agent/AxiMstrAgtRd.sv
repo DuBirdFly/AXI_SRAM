@@ -10,6 +10,7 @@ class AxiMstrAgtRd extends uvm_agent;
     AxiMstrChnAr axiMstrChnAr = AxiMstrChnAr::type_id::create("axiMstrChnAr", this);
 
     AxiMstrChnR  axiMstrChnR  = AxiMstrChnR::type_id::create("axiMstrChnR", this);
+    AxiMstrMonR  axiMstrMonR  = AxiMstrMonR::type_id::create("axiMstrMonR", this);
 
     function new(string name = "AxiMstrAgtRd", uvm_component parent);
         super.new(name, parent);

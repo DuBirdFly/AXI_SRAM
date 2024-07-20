@@ -7,7 +7,7 @@ class AxiMstrChnR extends uvm_driver #(TrAxi);
 
     /* Declare Object Handles */
     virtual IfAxi vifAxi;
-    uvm_blocking_put_port #(TrAxi) put_port = new("put_port", this);
+    // uvm_blocking_put_port #(TrAxi) put_port = new("put_port", this);
 
     function new(string name = "AxiMstrChnR", uvm_component parent);
         super.new(name, parent);
@@ -37,6 +37,33 @@ class AxiMstrChnR extends uvm_driver #(TrAxi);
 
     endtask
 
+    // 使用组合逻辑, 实现 max performance
+    virtual task r_channel(input int pre_delay = 0);
+         // 因为允许乱序, 用 tr.len 不一定准确, 用 last 信号来控制通断
+        forever begin
+            int value;
+
+            wait(vifAxi.rvalid == 1);
+
+            // 不一定每一拍都能及时握手
+            void'( std::randomize(value) with { value dist {0:/7, [1:3]:/1}; } );
+            repeat (value) begin
+                vifAxi.m_cb.wvalid <= 0;
+                @(vifAxi.m_cb);
+            end
+
+            #1 vifAxi.rready = 1;
+
+            if (vifAxi.rlast) begin
+                @(vifAxi.aclk);
+                #2;
+                if (vifAxi.rvalid != 1) vifAxi.rready = 0;
+                break;
+            end
+        end
+    endtask
+
+    /*
     virtual task r_channel(input int pre_delay = 0);
         TrAxi tr = TrAxi::type_id::create("tr");
         int break_flag = 0;
@@ -73,5 +100,6 @@ class AxiMstrChnR extends uvm_driver #(TrAxi);
             if (break_flag) break;
         end
     endtask
+    */
 
 endclass

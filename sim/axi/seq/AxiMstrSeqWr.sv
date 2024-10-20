@@ -7,17 +7,31 @@ class AxiMstrSeqWr extends uvm_sequence #(TrAxi);
     /* Declare Normal Variables */
 
     /* Declare Object Handles */
+    TrAxi tr = TrAxi::type_id::create("tr");
 
     function new(string name = "AxiMstrSeqWr");
         super.new(name);
+        tr.wr_flag = 1;
     endfunction
 
     virtual task body();
         if (starting_phase != null) starting_phase.raise_objection(this);
-        case_0_run(256);
+        this.send_with(this.tr);
         if (starting_phase != null) starting_phase.drop_objection(this);
     endtask
 
+    // 发送 AxiMstrSeqWr.tr 指定的一次 AXI 写
+    virtual task send_with(TrAxi tr);
+        TrAxi tr_aw, tr_w;
+        tr.wr_flag = 1;
+        tr.align_calcu();
+        fork
+            `zpf_do_on_clone(tr, tr_aw, p_sequencer.axiMstrSqrAw)
+            `zpf_do_on_clone(tr, tr_w, p_sequencer.axiMstrSqrW)
+        join_any
+    endtask
+
+    /*
     // 发送随机的 INCR 写
     virtual task case_0_run(int tr_num);
         TrAxi tr_q_aw[$], tr_q_w[$], tr_aw, tr_w;
@@ -53,5 +67,6 @@ class AxiMstrSeqWr extends uvm_sequence #(TrAxi);
         wait (tr_q_aw.size() == 0 && tr_q_w.size() == 0);
 
     endtask
+    */
 
 endclass

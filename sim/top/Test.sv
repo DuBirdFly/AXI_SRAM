@@ -40,7 +40,11 @@ class Test extends uvm_test;
         phase.raise_objection(this);
 
         @(vifAxi.m_cb);
-        axiMstrSeqWr.start(env.axiMstrEnv.axiMstrVirSqrWr);
+
+        begin
+            `include "TESTCASE.sv"
+        end
+
         #500ns;
         if (env.axiMstrEnv.axiSlvRef.tr_q_aw.size() != 0) `uvm_warning("CRITICAL", "AW Queue is not empty in AxiSlvRef")
         if (env.axiMstrEnv.axiSlvRef.tr_q_w.size()  != 0) `uvm_warning("CRITICAL", "W  Queue is not empty in AxiSlvRef")
@@ -49,11 +53,9 @@ class Test extends uvm_test;
         vifAxi.peek_mem();
         env.axiMstrEnv.axiSlvRef.peek_mem();
 
-        @(vifAxi.m_cb);
-        axiMstrSeqRd.start(env.axiMstrEnv.axiMstrAgtRd.axiMstrSqrAr);
-        #500ns;
-
-        #1ns;
+        // @(vifAxi.m_cb);
+        // axiMstrSeqRd.start(env.axiMstrEnv.axiMstrAgtRd.axiMstrSqrAr);
+        // #500ns;
 
         phase.drop_objection(this);
     endtask

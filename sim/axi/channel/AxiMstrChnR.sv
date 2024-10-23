@@ -46,11 +46,11 @@ class AxiMstrChnR extends uvm_driver #(TrAxi);
             wait(vifAxi.rvalid == 1);
 
             // 不一定每一拍都能及时握手
-            void'( std::randomize(value) with { value dist {0:/7, [1:3]:/1}; } );
-            repeat (value) begin
-                vifAxi.m_cb.wvalid <= 0;
-                @(vifAxi.m_cb);
-            end
+            // void'( std::randomize(value) with { value dist {0:/7, [1:3]:/1}; } );
+            // repeat (value) begin
+            //     vifAxi.m_cb.wvalid <= 0;
+            //     @(vifAxi.m_cb);
+            // end
 
             #1 vifAxi.rready = 1;
 

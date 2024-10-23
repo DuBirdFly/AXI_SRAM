@@ -34,17 +34,16 @@ class AxiMstrChnW extends uvm_driver #(TrAxi);
 
         forever begin
             seq_item_port.get_next_item(req);
-
-            w_channel(req, 0);
-
+            w_channel(req);
             seq_item_port.item_done();
         end
 
     endtask
 
     //! 断言 VALID (AxVALID/xVALID) 信号时，它必须保持处于已断言状态直至从设备发出 AxREADY/xREADY 断言后出现上升时钟沿为止
-    virtual task w_channel(TrAxi tr, int pre_delay = 0);
-        repeat (pre_delay) @(vifAxi.m_cb);
+    virtual task w_channel(TrAxi tr);
+
+        $display("tr.data.size() = %0d", tr.data.size());
 
         foreach (tr.data[i]) begin
             // int value;

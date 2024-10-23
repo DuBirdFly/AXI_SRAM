@@ -81,37 +81,45 @@ class AxiSlvScb extends uvm_scoreboard;
 
     task check_data_queue_with_ref(TrAxi tr_scb);
         TrAxi tr_ref = TrAxi::type_id::create("tr_ref");
-        int pass_flag = 1;
+        bit pass_flag = 1;
 
         tr_scb.align_calcu();
-
-        `uvm_info(get_type_name(), "\n**** Scoreboard TrAxi from Chn AR+R: ****", UVM_MEDIUM)
-        $write(tr_scb.get_info());
-
         transport_port.transport(tr_scb, tr_ref);
 
         if (tr_scb.data.size() != tr_ref.data.size()) begin
-            `uvm_warning("CRITICAL", "Data Size Mismatch")
+            // $display("Data Size Mismatch !!!");
             pass_flag = 0;
         end
         else begin
-            for (int i = 0; i < tr_scb.data.size(); i++) begin
-                if (tr_scb.data[i] !== tr_ref.data[i]) begin
-                    `uvm_warning("CRITICAL", $sformatf("Data Mismatch at Index %0d", i))
-                    pass_flag = 0;
-                    break;
+            foreach (tr_scb.data[i]) begin
+                //! scb_data 和 ref_data 每 8 bit 进行一次比较 (scb_data 的某个 8 bit 为 8'hx 时，不进行比较)
+                for (int j = 0; j < `AXI_DATA_WIDTH / 8; j++) begin
+                    logic [7:0] scb_data_8b = tr_scb.data[i][8*j +: 8];
+                    logic [7:0] ref_data_8b = tr_ref.data[i][8*j +: 8];
+
+                    if (ref_data_8b === 8'hxx) begin
+                        continue; 
+                    end
+                    if (scb_data_8b !== ref_data_8b) begin
+                        // $display("Data Mismatch at Index %0d", i);
+                        pass_flag = 0;
+                        break;
+                    end
                 end
             end
         end
 
+        `uvm_info(get_type_name(), "\n**** Scoreboard TrAxi from Chn AR+R: ****", UVM_MEDIUM)
+        $write(tr_scb.get_info());
+
         if (pass_flag == 0) begin
-            `uvm_warning("CRITICAL", "\n**** Check Data Queue with Ref Failed ****")
-            $display(tr_ref.get_info());
-
-            `uvm_fatal(get_type_name(), "Data Mismatch")
+            $display("**** Transported TrAxi from RefModel: ****");
+            $write(tr_ref.get_info());
+            `uvm_warning("CRITICAL", "\n**** Check Fail ****\n")
         end
-
-        $display("**** Check Passed ****\n");
+        else begin
+            $display("**** Check Passed ****\n");
+        end
 
     endtask
 

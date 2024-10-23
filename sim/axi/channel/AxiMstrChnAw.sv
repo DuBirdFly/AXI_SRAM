@@ -39,14 +39,12 @@ class AxiMstrChnAw extends uvm_driver #(TrAxi);
 
         forever begin
             seq_item_port.get_next_item(req);
-            aw_channel(req, 0);
+            aw_channel(req);
             seq_item_port.item_done();
         end
     endtask
 
-    virtual task aw_channel(TrAxi tr, int pre_delay = 0);
-        repeat (pre_delay) @(vifAxi.m_cb);
-
+    virtual task aw_channel(TrAxi tr);
         vifAxi.m_cb.awid    <= tr.id;
         vifAxi.m_cb.awaddr  <= tr.addr;
         vifAxi.m_cb.awlen   <= tr.len;
